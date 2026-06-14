@@ -14,6 +14,19 @@ const server = http.createServer(app);
 
 app.use(cors({ origin: "*" }));
 app.use(express.json());
+
+let isConnected = false;
+async function connectDB() {
+  if (isConnected) return;
+  await mongoose.connect(process.env.MONGO_URI);
+  isConnected = true;
+}
+
+app.use(async (req, res, next) => {
+  try { await connectDB(); next(); }
+  catch (err) { res.status(500).json({ message: "DB connection failed" }); }
+});
+
 app.use("/api/sessions", sessionRoutes);
 app.get("/", (_, res) => res.send("Live Classroom Collaboration API is running"));
 
@@ -140,12 +153,15 @@ io.on("connection", (socket) => {
   });
 });
 
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected successfully"))
-  .catch((err) => console.error("MongoDB connection failed", err.message));
-
-const PORT = process.env.PORT || 5001;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+if (process.env.NODE_ENV !== "production") {
+  mongoose
+    .connect(process.env.MONGO_URI)
+    .then(() => {
+      const PORT = process.env.PORT || 5001;
+      server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+      console.log("MongoDB connected successfully");
+    })
+    .catch((err) => console.error("MongoDB connection failed", err.message));
+}
 
 module.exports = app;
