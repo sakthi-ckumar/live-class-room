@@ -142,9 +142,10 @@ io.on("connection", (socket) => {
 
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => {
-    const PORT = process.env.PORT || 5001;
-    server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-    console.log("MongoDB connected successfully");
-  })
+  .then(() => console.log("MongoDB connected successfully"))
   .catch((err) => console.error("MongoDB connection failed", err.message));
+
+const PORT = process.env.PORT || 5001;
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+module.exports = app;
