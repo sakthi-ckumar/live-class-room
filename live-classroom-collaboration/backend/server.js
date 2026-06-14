@@ -12,13 +12,13 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-app.use(cors());
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use("/api/sessions", sessionRoutes);
 app.get("/", (_, res) => res.send("Live Classroom Collaboration API is running"));
 
 const io = new Server(server, {
-  cors: { origin: "http://localhost:5173", methods: ["GET", "POST"] }
+  cors: { origin: "*", methods: ["GET", "POST"] }
 });
 
 const onlineUsersBySession = new Map();

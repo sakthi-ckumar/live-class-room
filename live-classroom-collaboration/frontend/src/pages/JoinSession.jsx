@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 
-const API = "http://localhost:5001/api/sessions";
+const API = `${import.meta.env.VITE_API_URL}/sessions`;
 
 function JoinSession({ onJoin }) {
   const [tab, setTab] = useState("join");

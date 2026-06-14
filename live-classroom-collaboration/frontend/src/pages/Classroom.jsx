@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { jsPDF } from "jspdf";
 import NotesPanel from "../components/NotesPanel";
@@ -29,10 +29,10 @@ function Classroom({ sessionInfo, onLeave }) {
   const coSolveTimerRef = useRef(null);
   const socketRef       = useRef(null);
 
-  const apiUrl = useMemo(() => "http://localhost:5001/api", []);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    const socket = io("http://localhost:5001");
+    const socket = io(import.meta.env.VITE_SOCKET_URL);
     socketRef.current = socket;
 
     socket.emit("join-session", { accessCode, userName, password });
